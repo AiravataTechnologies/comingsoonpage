@@ -8,17 +8,19 @@ import { useMutation } from "@tanstack/react-query";
 
 export const ComingSoonPage = (): JSX.Element => {
   const [email, setEmail] = useState("");
-  const [recipientEmail, setRecipientEmail] = useState("");
   const { toast } = useToast();
 
   const subscriptionMutation = useMutation({
-    mutationFn: async (data: { email: string; recipientEmail: string }) => {
+    mutationFn: async (email: string) => {
       const response = await fetch("/api/subscribe", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ 
+          email, 
+          recipientEmail: "raneaniket23@gmail.com" 
+        }),
       });
 
       if (!response.ok) {
@@ -44,22 +46,11 @@ export const ComingSoonPage = (): JSX.Element => {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleSubmit = () => {
     if (!email.trim()) {
       toast({
         title: "Error",
         description: "Please enter your email address.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!recipientEmail.trim()) {
-      toast({
-        title: "Error", 
-        description: "Recipient email is required. Please contact the site administrator.",
         variant: "destructive",
       });
       return;
@@ -75,7 +66,7 @@ export const ComingSoonPage = (): JSX.Element => {
       return;
     }
 
-    subscriptionMutation.mutate({ email, recipientEmail });
+    subscriptionMutation.mutate(email);
   };
 
   return (
@@ -98,43 +89,29 @@ export const ComingSoonPage = (): JSX.Element => {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex items-center space-x-4">
-                <Card className="flex-grow rounded-full border border-[#bdbdbd] backdrop-blur-[2px] bg-transparent">
-                  <CardContent className="p-0">
-                    <Input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="border-0 bg-transparent h-14 px-8 font-['Kantumruy',Helvetica] text-[#999999]"
-                      placeholder="Enter your email For Get Notification"
-                      required
-                      disabled={subscriptionMutation.isPending}
-                    />
-                  </CardContent>
-                </Card>
-                <Button
-                  type="submit"
-                  size="icon"
-                  className="w-[60px] h-[60px] rounded-full bg-[#ffc700] hover:bg-[#e6b400] text-black"
-                  disabled={subscriptionMutation.isPending}
-                >
-                  <ArrowRightIcon className="h-6 w-6" />
-                </Button>
-              </div>
-              
-              <div className="max-w-md">
-                <Input
-                  type="email"
-                  value={recipientEmail}
-                  onChange={(e) => setRecipientEmail(e.target.value)}
-                  className="h-12 px-4 font-['Kantumruy',Helvetica] text-sm"
-                  placeholder="Your Gmail address (where notifications will be sent)"
-                  required
-                  disabled={subscriptionMutation.isPending}
-                />
-              </div>
-            </form>
+            <div className="flex items-center space-x-4">
+              <Card className="flex-grow rounded-full border border-[#bdbdbd] backdrop-blur-[2px] bg-transparent">
+                <CardContent className="p-0">
+                  <Input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="border-0 bg-transparent h-14 px-8 font-['Kantumruy',Helvetica] text-[#999999]"
+                    placeholder="Enter your email For Get Notification"
+                    required
+                    disabled={subscriptionMutation.isPending}
+                  />
+                </CardContent>
+              </Card>
+              <Button
+                onClick={handleSubmit}
+                size="icon"
+                className="w-[60px] h-[60px] rounded-full bg-[#ffc700] hover:bg-[#e6b400] text-black"
+                disabled={subscriptionMutation.isPending}
+              >
+                <ArrowRightIcon className="h-6 w-6" />
+              </Button>
+            </div>
           </div>
 
           <div className="relative mt-8 md:mt-0">
