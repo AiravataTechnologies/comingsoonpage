@@ -17,9 +17,9 @@ export const ComingSoonPage = (): JSX.Element => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
-          email, 
-          recipientEmail: "raneaniket23@gmail.com" 
+        body: JSON.stringify({
+          email,
+          recipientEmail: "raneaniket23@gmail.com"
         }),
       });
 
@@ -69,35 +69,44 @@ export const ComingSoonPage = (): JSX.Element => {
     subscriptionMutation.mutate(email);
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
   return (
-    <div className="bg-neutral-50 flex justify-center items-start w-screen min-h-screen">
-      <div className="relative w-full max-w-[1440px] min-h-[810px] overflow-hidden">
-        <div className="flex flex-col md:flex-row justify-between items-center px-6 md:px-12 py-8 md:py-16 max-w-[1676px]">
-          <div className="flex flex-col max-w-[533px] space-y-8 z-10">
-            <div className="flex flex-col space-y-6">
-              <div className="flex flex-col space-y-3">
-                <p className="font-['Kantumruy',Helvetica] font-bold text-[#595959] text-lg tracking-[0.18px] leading-9">
+    <div className="bg-neutral-50 flex justify-center items-center w-full min-h-screen p-4">
+      <div className="relative w-full max-w-[1440px] overflow-hidden">
+        <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center px-0 sm:px-4 md:px-8 lg:px-12 py-4 sm:py-6 md:py-8 lg:py-16 gap-4 sm:gap-6 lg:gap-8 min-h-[calc(100vh-2rem)] lg:min-h-[810px]">
+          {/* Content Section */}
+          <div className="flex flex-col w-full lg:max-w-[533px] space-y-6 sm:space-y-8 z-10 text-center lg:text-left">
+            <div className="flex flex-col space-y-4 sm:space-y-6">
+              <div className="flex flex-col space-y-2 sm:space-y-3">
+                <p className="font-['Kantumruy',Helvetica] font-bold text-[#595959] text-sm sm:text-base lg:text-lg tracking-[0.18px] leading-6 sm:leading-8 lg:leading-9">
                   Hello 👋, We&#39;re working on something exciting!
                 </p>
-                <h1 className="font-['Kanit',Helvetica] font-bold text-black text-[64px] tracking-[1.92px] leading-[80px]">
+                <h1 className="font-['Kanit',Helvetica] font-bold text-black text-[28px] sm:text-[36px] md:text-[48px] lg:text-[64px] tracking-[0.8px] sm:tracking-[1.2px] lg:tracking-[1.92px] leading-[36px] sm:leading-[44px] md:leading-[60px] lg:leading-[80px]">
                   Coming Soon, Stay tuned...
                 </h1>
               </div>
-              <p className="font-['Kantumruy',Helvetica] font-normal text-[#595959] text-base leading-[27px]">
+              <p className="font-['Kantumruy',Helvetica] font-normal text-[#595959] text-sm sm:text-base leading-5 sm:leading-6 lg:leading-[27px] max-w-md mx-auto lg:mx-0">
                 Our website is currently undergoing maintenance to bring you new
                 features and improvements. We apologize for any inconvenience.
               </p>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <Card className="flex-grow rounded-full border border-[#bdbdbd] backdrop-blur-[2px] bg-transparent">
+            {/* Email Subscription Section */}
+            <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-3 lg:space-x-4 w-full max-w-md mx-auto lg:mx-0">
+              <Card className="flex-grow w-full sm:w-auto rounded-full border border-[#bdbdbd] backdrop-blur-[2px] bg-transparent">
                 <CardContent className="p-0">
                   <Input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="border-0 bg-transparent h-14 px-8 font-['Kantumruy',Helvetica] text-[#999999]"
-                    placeholder="Enter your email For Get Notification"
+                    onKeyPress={handleKeyPress}
+                    className="border-0 bg-transparent h-12 sm:h-14 px-4 sm:px-6 lg:px-8 font-['Kantumruy',Helvetica] text-[#999999] text-sm sm:text-base placeholder:text-xs sm:placeholder:text-sm"
+                    placeholder="Enter your email for notifications"
                     required
                     disabled={subscriptionMutation.isPending}
                   />
@@ -106,24 +115,23 @@ export const ComingSoonPage = (): JSX.Element => {
               <Button
                 onClick={handleSubmit}
                 size="icon"
-                className="w-[60px] h-[60px] rounded-full bg-[#ffc700] hover:bg-[#e6b400] text-black"
+                className="w-12 h-12 sm:w-[56px] sm:h-[56px] lg:w-[60px] lg:h-[60px] rounded-full bg-[#ffc700] hover:bg-[#e6b400] text-black flex-shrink-0 transition-all duration-200"
                 disabled={subscriptionMutation.isPending}
               >
-                <ArrowRightIcon className="h-6 w-6" />
+                <ArrowRightIcon className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
               </Button>
             </div>
           </div>
 
-          <div className="relative mt-8 md:mt-0">
+          {/* Image Section */}
+          <div className="relative mt-4 sm:mt-6 lg:mt-0 w-full lg:w-auto flex justify-center lg:justify-end">
             <img
-              className="w-full md:w-[732px] h-auto object-cover"
+              className="w-full max-w-[250px] sm:max-w-[350px] md:max-w-[450px] lg:max-w-[600px] xl:w-[732px] h-auto object-cover"
               alt="Vora logo"
               src="/figmaAssets/2676-080625-vora-hp-png-01-2.png"
             />
           </div>
         </div>
-
-
       </div>
     </div>
   );
