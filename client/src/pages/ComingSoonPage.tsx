@@ -1,10 +1,83 @@
 import { ArrowRightIcon } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation } from "@tanstack/react-query";
 
 export const ComingSoonPage = (): JSX.Element => {
+  const [email, setEmail] = useState("");
+  const [recipientEmail, setRecipientEmail] = useState("");
+  const { toast } = useToast();
+
+  const subscriptionMutation = useMutation({
+    mutationFn: async (data: { email: string; recipientEmail: string }) => {
+      const response = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to subscribe");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success!",
+        description: "Thank you for subscribing! We'll notify you when we launch.",
+      });
+      setEmail("");
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter your email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!recipientEmail.trim()) {
+      toast({
+        title: "Error", 
+        description: "Recipient email is required. Please contact the site administrator.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    subscriptionMutation.mutate({ email, recipientEmail });
+  };
+
   return (
     <div className="bg-neutral-50 flex justify-center items-start w-screen min-h-screen">
       <div className="relative w-full max-w-[1440px] min-h-[810px] overflow-hidden">
@@ -25,22 +98,43 @@ export const ComingSoonPage = (): JSX.Element => {
               </p>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <Card className="flex-grow rounded-full border border-[#bdbdbd] backdrop-blur-[2px] bg-transparent">
-                <CardContent className="p-0">
-                  <Input
-                    className="border-0 bg-transparent h-14 px-8 font-['Kantumruy',Helvetica] text-[#999999]"
-                    placeholder="Enter your email For Get Notification"
-                  />
-                </CardContent>
-              </Card>
-              <Button
-                size="icon"
-                className="w-[60px] h-[60px] rounded-full bg-[#ffc700] hover:bg-[#e6b400] text-black"
-              >
-                <ArrowRightIcon className="h-6 w-6" />
-              </Button>
-            </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="flex items-center space-x-4">
+                <Card className="flex-grow rounded-full border border-[#bdbdbd] backdrop-blur-[2px] bg-transparent">
+                  <CardContent className="p-0">
+                    <Input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="border-0 bg-transparent h-14 px-8 font-['Kantumruy',Helvetica] text-[#999999]"
+                      placeholder="Enter your email For Get Notification"
+                      required
+                      disabled={subscriptionMutation.isPending}
+                    />
+                  </CardContent>
+                </Card>
+                <Button
+                  type="submit"
+                  size="icon"
+                  className="w-[60px] h-[60px] rounded-full bg-[#ffc700] hover:bg-[#e6b400] text-black"
+                  disabled={subscriptionMutation.isPending}
+                >
+                  <ArrowRightIcon className="h-6 w-6" />
+                </Button>
+              </div>
+              
+              <div className="max-w-md">
+                <Input
+                  type="email"
+                  value={recipientEmail}
+                  onChange={(e) => setRecipientEmail(e.target.value)}
+                  className="h-12 px-4 font-['Kantumruy',Helvetica] text-sm"
+                  placeholder="Your Gmail address (where notifications will be sent)"
+                  required
+                  disabled={subscriptionMutation.isPending}
+                />
+              </div>
+            </form>
           </div>
 
           <div className="relative mt-8 md:mt-0">
@@ -52,7 +146,7 @@ export const ComingSoonPage = (): JSX.Element => {
           </div>
         </div>
 
-        <div className="absolute w-full h-[35px] bottom-0 left-0 bg-[#c4c4c4]" />
+
       </div>
     </div>
   );
