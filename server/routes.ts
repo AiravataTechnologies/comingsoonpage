@@ -31,7 +31,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         service: 'gmail',
         auth: {
           user: 'raneaniket23@gmail.com',
-          pass: process.env.GMAIL_APP_PASSWORD
+          pass: 'bacnckysycnwedju'
         }
       });
 
